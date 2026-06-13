@@ -17,7 +17,9 @@ import {
 
 export const Route = createFileRoute("/admin")({ component: Admin });
 
-const emptyDraft: InterviewVideoInput = {
+type InterviewVideoDraft = Omit<InterviewVideoInput, "thumbnailUrl">;
+
+const emptyDraft: InterviewVideoDraft = {
   title: "",
   guestName: "",
   guestRole: "",
@@ -25,7 +27,6 @@ const emptyDraft: InterviewVideoInput = {
   quote: "",
   description: "",
   videoUrl: "",
-  thumbnailUrl: "",
   duration: "",
 };
 
@@ -33,7 +34,7 @@ function Admin() {
   const { user, loading, isAdmin, isConfigured } = useAuthUser();
   const [usersCount, setUsersCount] = useState<number | null>(null);
   const [videos, setVideos] = useState<InterviewVideo[]>([]);
-  const [draft, setDraft] = useState<InterviewVideoInput>(emptyDraft);
+  const [draft, setDraft] = useState<InterviewVideoDraft>(emptyDraft);
   const [status, setStatus] = useState("");
 
   useEffect(() => {
@@ -70,7 +71,7 @@ function Admin() {
       return;
     }
 
-    const input = {
+    const input: InterviewVideoInput = {
       ...draft,
       title: draft.title.trim(),
       guestName: draft.guestName.trim(),
@@ -78,7 +79,7 @@ function Admin() {
       quote: draft.quote.trim(),
       description: draft.description.trim(),
       videoUrl: draft.videoUrl.trim(),
-      thumbnailUrl: draft.thumbnailUrl.trim(),
+      thumbnailUrl: "",
       duration: draft.duration.trim(),
     };
 
@@ -229,12 +230,6 @@ function Admin() {
               label="Video URL"
               value={draft.videoUrl}
               onChange={(videoUrl) => setDraft({ ...draft, videoUrl })}
-              type="url"
-            />
-            <Field
-              label="Thumbnail URL"
-              value={draft.thumbnailUrl}
-              onChange={(thumbnailUrl) => setDraft({ ...draft, thumbnailUrl })}
               type="url"
             />
             <Field
